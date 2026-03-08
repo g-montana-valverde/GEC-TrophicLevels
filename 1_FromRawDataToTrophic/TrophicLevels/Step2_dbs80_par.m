@@ -34,8 +34,8 @@ k=2;                          % 2nd order butterworth filter
 
 
 %% Group
-FCPB = zeros(NSUB, N, N);
-COVtauPB = zeros(NSUB, N, N);
+FC = zeros(NSUB, N, N);
+COVtau = zeros(NSUB, N, N);
 parfor nsub=1:NSUB
 
     ts=data{nsub};
@@ -47,7 +47,7 @@ parfor nsub=1:NSUB
     ts2=ts(indexN,10:end-10);
     Tm=size(ts2,2);
     FCemp=corrcoef(ts2');
-    FCPB(nsub,:,:)=FCemp;
+    FC(nsub,:,:)=FCemp;
     COVemp=cov(ts2');
     
     tst=ts2';
@@ -64,10 +64,10 @@ parfor nsub=1:NSUB
     end
     
     COVtauemp=COVtauemp.*sigratio;
-    COVtauPB(nsub,:,:)=COVtauemp;
+    COVtau(nsub,:,:)=COVtauemp;
 end
-FCemp=squeeze(mean(FCPB));
-COVtauemp=squeeze(mean(COVtauPB));
+FCemp=squeeze(mean(FC));
+COVtauemp=squeeze(mean(COVtau));
 Cnew=C;
 olderror=100000;
 errorFC=zeros(1,5000);
@@ -113,12 +113,12 @@ for iter=1:5000
     end
     Cnew = Cnew/max(max(Cnew))*maxC;
 end
-CeffgroupPB=Cnew;
+Ceffgroup=Cnew;
 
 %% Individual GEC
-CeffPB = zeros(NSUB, N, N);
-fittFC_PB = zeros(1, NSUB);
-fittCVtau_PB = zeros(1, NSUB);
+Ceff = zeros(NSUB, N, N);
+fittFC = zeros(1, NSUB);
+fittCVtau = zeros(1, NSUB);
 parfor nsub=1:NSUB
     disp(['GEC subject: ' num2str(nsub)]);
 
@@ -131,7 +131,7 @@ parfor nsub=1:NSUB
     ts2=ts(indexN,10:end-10);
     Tm=size(ts2,2);
     FCemp=corrcoef(ts2');
-    FCPB(nsub,:,:)=FCemp;
+    FC(nsub,:,:)=FCemp;
     COVemp=cov(ts2');
     
     tst=ts2';
@@ -148,7 +148,7 @@ parfor nsub=1:NSUB
     end
     COVtauemp=COVtauemp.*sigratio;
     
-    Cnew=CeffgroupPB;
+    Cnew=Ceffgroup;
     olderror=100000;
     sigratiosim = zeros(N, N);
     for iter=1:5000
@@ -190,9 +190,9 @@ parfor nsub=1:NSUB
         Cnew = Cnew/max(max(Cnew))*maxC;
     end
     Ceff=Cnew;
-    CeffPB(nsub,:,:)=Ceff;
+    Ceff(nsub,:,:)=Ceff;
     [FCsim,COVsim,COVsimtotal,A]=hopf_int(Ceff,f_diff,sigma);
-    fittFC_PB(nsub)=corr2(FCemp(Isubdiag),FCsim(Isubdiag));
+    fittFC(nsub)=corr2(FCemp(Isubdiag),FCsim(Isubdiag));
     COVtausim=expm((Tau*TR)*A)*COVsimtotal;
     COVtausim=COVtausim(1:N,1:N);
     for i=1:N
@@ -201,16 +201,16 @@ parfor nsub=1:NSUB
         end
     end
     COVtausim=COVtausim.*sigratiosim;
-    fittCVtau_PB(nsub)=corr2(COVtauemp(Isubdiag),COVtausim(Isubdiag));
+    fittCVtau(nsub)=corr2(COVtauemp(Isubdiag),COVtausim(Isubdiag));
 end
 
 
 %% Trophic Levels
 
 hierarchicallevels = zeros(NSUB, N);
-coherence = zeros(1, NSUB);
+directedness = zeros(1, NSUB);
 for nsub=1:NSUB
-    Ceff=squeeze(CeffPB(nsub,:,:));
+    Ceff=squeeze(Ceff(nsub,:,:));
     A=Ceff';
     d=sum(A)';
     delta=sum(A,2);
@@ -223,7 +223,7 @@ for nsub=1:NSUB
     gamma=gamma-min(gamma);
     H = gamma - gamma';
     F0 = sum(sum(A .* (H - 1).^2)) / sum(A(:));
-    coherence(nsub)=1-F0;
+    directedness(nsub)=1-F0;
 end
 
 save(['TL_' group '_' atlas '.mat']);
