@@ -20,7 +20,7 @@ The pipeline evaluates **regional trophic levels** and **global directedness**, 
 
 ├── src/
 │   ├── data/
-│   │   ├── dbs80_label.txt
+│   │   ├── dbs80_labels.txt
 │   │   └── reg2net.json
 │   │
 │   └── functions_pipeline/

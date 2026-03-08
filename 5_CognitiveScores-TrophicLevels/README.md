@@ -18,7 +18,7 @@ Analyses are performed at two spatial scales:
 ├── src/
 │
 │ ├── data/
-│ │ ├── dbs80_label.txt
+│ │ ├── dbs80_labels.txt
 │ │ └── reg2net.json
 │ │
 │ └── functions_pipeline/

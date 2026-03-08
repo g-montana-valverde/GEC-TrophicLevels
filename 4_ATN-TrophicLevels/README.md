@@ -18,7 +18,7 @@ using **ridge-regularized linear mixed-effects models**.
 ├── src/
 │
 │ ├── data/
-│ │ ├── dbs80_label.txt
+│ │ ├── dbs80_labels.txt
 │ │ └── reg2net.json
 │ │
 │ └── functions_pipeline/
