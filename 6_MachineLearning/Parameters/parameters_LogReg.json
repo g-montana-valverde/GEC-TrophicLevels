@@ -1,0 +1,28 @@
+{
+  "TEST_SIZE": 0.25,
+  "DO_KFOLD_TEST": true,
+  "RANDOM_STATE": 2,
+  "VERBOSE": 0,
+  "GROUPS": {
+    "MCI_ABneg": 0,
+    "MCI_ABpos": 1
+  },
+  "ID_KEY" : "PTID",
+  "GROUP_KEY": "Group",
+  "MODEL_TYPE": "LogisticRegression",
+  "MODEL_KWARGS": {
+    "class_weight": "balanced",
+    "solver": "liblinear",
+    "max_iter": 1000
+  },
+  "USE_MRMR_FEATURE_SELECTION": true,
+  "STANDARDIZE_DATA": true,
+  "GRID_SEARCH": {
+    "HYPERPARAM_SWEEP": {
+     "NF": [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "C": [0.01, 0.1, 1, 5, 10, 50, 100, 500],
+      "penalty": ["l1", "l2"]
+    },
+    "SCORE": "AUC"
+  }
+}
