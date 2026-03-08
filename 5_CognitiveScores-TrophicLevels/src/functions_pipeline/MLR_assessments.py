@@ -76,7 +76,7 @@ def run_multiple_regression(measure_df, cog_df, cog_name, demographics_df, measu
 		# find matching index in region_labels (case-insensitive, stripped)
 		idx = next((i for i, lbl in enumerate(region_cols)
 					if str(lbl).strip().lower() == region), None)
-		if idx is not None:#'t'
+		if idx is not None:
 			render_array[idx] = beta
 
 	savemat(out_path + 'Render.mat', {'render': np.asarray(render_array)})
