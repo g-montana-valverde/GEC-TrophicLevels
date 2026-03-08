@@ -7,7 +7,7 @@ from scipy.stats import zscore
 import statsmodels.api as sm
 
 def run_GEC_metrics(GEC_ALL):
-	out_in_degree_ratio_list, clust_list, mean_path_len_list, betweenness_list = [], [], [], []
+	indegree_list, outdegree_list, out_in_degree_ratio_list, clust_list, mean_path_len_list, betweenness_list = [], [], [], [], [], []
 	for sub in tqdm(range(GEC_ALL.shape[0])):
 		GEC = GEC_ALL[sub, :, :]
 		np.fill_diagonal(GEC, 0)

@@ -1,8 +1,9 @@
 import argparse
 import numpy as np
 import pandas as pd
-from scipy.io import loadmat, savemat
+from scipy.io import loadmat
 from pathlib import Path
+from scipy.stats import zscore
 
 from functions_pipeline import (
     harmonize_data,
@@ -44,7 +45,7 @@ cov = pd.concat([demo.reset_index(drop=True), sites.reset_index(drop=True)], axi
 # -------------------------------------------------------
 print("Harmonizing...")
 TL_h = harmonize_data(TL, cov)
-GEC_h = harmonize_data(GEC_ALL.reshape(len(GEC_ALL), -1), covariates)
+GEC_h = harmonize_data(GEC_ALL.reshape(len(GEC_ALL), -1), cov)
 GEC_h = GEC_h.reshape(GEC_ALL.shape)
 
 # -------------------------------------------------------
@@ -74,7 +75,7 @@ regression_analysis(
 # -------------------------------------------------------
 print("Plotting histogram...")
 zTL=zscore(TL_h.mean(axis=0))
-plot_histogram(zTL, np.percentile(zTL, 33), np.percentile(zTL, 66), bins=9, , out_path=str(out_dir / "Histogram.png"))
+plot_histogram(zTL, np.percentile(zTL, 33), np.percentile(zTL, 66), bins=9, out_path=str(out_dir / "Histogram.png"))
 
 print("Plotting correlations...")
 plot_correlation_with_mean(metrics['out_in_degree_ratio_array_GEC'], TL_h, metrics['out_in_degree_ratio_array_GEC'].mean(axis=0), TL_h.mean(axis=0), 'Out-In Degree Ratio', 'Trophic Level', out_path=str(out_dir / "OutInRatio.png"))

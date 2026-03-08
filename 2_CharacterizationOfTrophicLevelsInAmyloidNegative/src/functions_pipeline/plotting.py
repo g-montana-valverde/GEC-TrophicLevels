@@ -1,10 +1,8 @@
-import os
 import numpy as np
-import nibabel as nib
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.colors import Normalize, ListedColormap
 from matplotlib.ticker import MaxNLocator
+from scipy.stats import pearsonr, zscore
+import seaborn as sns
 
 
 def plot_histogram(zTL, lower_threshold, upper_threshold, bins, out_path):
