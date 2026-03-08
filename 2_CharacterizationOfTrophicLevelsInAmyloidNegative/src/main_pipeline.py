@@ -6,11 +6,11 @@ from pathlib import Path
 from scipy.stats import zscore
 
 from functions_pipeline import (
-    harmonize_data,
-    run_GEC_metrics,
-    regression_analysis,
-    plot_histogram,
-    plot_correlation_with_mean
+	harmonize_data,
+	run_GEC_metrics,
+	regression_analysis,
+	plot_histogram,
+	plot_correlation_with_mean
 )
 
 # -------------------------------------------------------
@@ -52,10 +52,7 @@ GEC_h = GEC_h.reshape(GEC_ALL.shape)
 # 4. Run GEC metrics
 # -------------------------------------------------------
 print("Computing GEC metrics...")
-metrics = run_GEC_metrics(
-    GEC_h,
-    out_path=out_dir / "GEC_metrics.mat"
-)
+metrics = run_GEC_metrics(GEC_h)
 
 # -------------------------------------------------------
 # 5. Regression
@@ -63,11 +60,12 @@ metrics = run_GEC_metrics(
 print("Running regression analysis...")
 metric_names = ["out/deg ratio", "clustering", "path len", "betweenness"]
 regression_analysis(
-    [metrics["out_in_degree_ratio_array_GEC"],
-     metrics["clust_array_GEC"],
-     metrics["mean_path_len_array_GEC"],
-     metrics["betweenness_array_GEC"]],
-    metric_names
+	[metrics["out_in_degree_ratio_array_GEC"],
+		metrics["clust_array_GEC"],
+		metrics["mean_path_len_array_GEC"],
+		metrics["betweenness_array_GEC"]],
+	TL_h,
+	metric_names
 )
 
 # -------------------------------------------------------
