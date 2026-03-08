@@ -6,8 +6,8 @@ The analysis compares trophic hierarchy metrics across four groups:
 
 * HCn — amyloid-negative healthy controls
 * HCp — amyloid-positive healthy controls
-* MCIp — mild cognitive impairment with amyloid pathology
-* ADp — Alzheimer's disease patients with amyloid pathology
+* MCIp — mild cognitive impairment with amyloid-positive
+* ADp — Alzheimer's disease patients with amyloid-positive
 
 The pipeline evaluates **regional trophic levels** and **global directedness**, and performs **group comparisons using permutation-based statistical tests controlling for demographic covariates**.
 
