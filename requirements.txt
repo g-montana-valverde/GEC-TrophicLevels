@@ -1,10 +1,10 @@
-External software required
+External software required:
 
 - fMRIPrep 21.0.1
 - MRtrix3
 - MATLAB R2025b
 
-Python packages required
+Python packages required:
 
 numpy==1.26.4
 pandas==2.2.3
