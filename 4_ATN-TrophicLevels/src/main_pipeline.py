@@ -20,7 +20,7 @@ parser.add_argument("--out-dir", required=True, help="Where results will be save
 args = parser.parse_args()
 
 data_dir = Path(args.data_dir)
-derivatives_dir = Path(args.derivatives_dir)
+derivatives_dir = Path(args.deriv_dir)
 out_dir = Path(args.out_dir)
 out_dir.mkdir(exist_ok=True, parents=True)
 
@@ -35,7 +35,7 @@ for i, part in enumerate(parts, start=1):
 # -------------------------------------------------------
 # 2. Load data
 # -------------------------------------------------------
-region_labels = pd.read_csv(data_dir + 'dbs80_labels.txt', sep="\t", header=None)[1].values
+region_labels = pd.read_csv(data_dir / 'dbs80_labels.txt', sep="\t", header=None)[1].values
 net_names = ['VN', 'SMN', 'DAN', 'SAN', 'LN', 'CN', 'DMN']
 with open(data_dir + 'reg2net.json', 'r') as f_json:
 	reg2net = json.load(f_json)
@@ -67,6 +67,10 @@ cov = pd.concat([demo.reset_index(drop=True), sites.reset_index(drop=True)], axi
 # 3. Harmonize data
 # -------------------------------------------------------
 print("Harmonizing...")
+TL_h = tl_df.copy()
+ABeta_h = ABeta_df.copy()
+Tau_h = Tau_df.copy()
+GMV_h = GMV_df.copy()
 TL_h[region_labels] = harmonize_data(tl_df[region_labels].to_numpy(), cov)
 ABeta_h[region_labels] = harmonize_data(ABeta_df[region_labels].to_numpy(), cov)
 Tau_h[region_labels] = harmonize_data(Tau_df[region_labels].to_numpy(), cov)
@@ -84,7 +88,7 @@ for net in net_names:
 	regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
 	exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
 	regions_in_net = [region for region in regions_in_net if not any(keyword in region.lower() for keyword in exclude_subcortical)]
-	if regions_in_sfn:
+	if regions_in_net:
 		TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
 		ABeta_net_h[net] = ABeta_h[regions_in_net].mean(axis=1)
 		Tau_net_h[net] = Tau_h[regions_in_net].mean(axis=1)
@@ -98,6 +102,6 @@ for net in net_names:
 print("Running Linear Mixed Effects Models with Ridge Regularization...")
 
 # 5.1. LME - Region Level
-LinearMixedEffectsRidge(TL_h, ABeta_h, Tau_h, GMV_h, demo, 'TrophicLevel', out_path=out_dir + "/RegionLevel/")
+LinearMixedEffectsRidge(TL_h, ABeta_h, Tau_h, GMV_h, demo, 'TrophicLevel', out_path=out_dir / "RegionLevel")
 # 5.2. LME - Network
-LinearMixedEffectsRidge(TL_net_h, ABeta_net_h, Tau_net_h, GMV_net_h, demo, 'TrophicLevel', out_path=out_dir + "/NetworkLevel/")
+LinearMixedEffectsRidge(TL_net_h, ABeta_net_h, Tau_net_h, GMV_net_h, demo, 'TrophicLevel', out_path=out_dir / "NetworkLevel")
