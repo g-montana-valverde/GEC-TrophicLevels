@@ -30,22 +30,21 @@ Raw MRI data
 ---
 
 # Directory Structure
-1_FromRawDataToTrophic/
 
+```
+1_FromRawDataToTrophic/
 ├── Preprocessing/
-│ └── fMRIprep_group.sh
-│
+│   └── fMRIprep_group.sh
 ├── Denoising/
-│ ├── SingleSubject_TimeSeries_Denoising.py
-│ └── Group_Denoised_TimeSeries.py
-│
+│   ├── SingleSubject_TimeSeries_Denoising.py
+│   └── Group_Denoised_TimeSeries.py
 ├── StructuralConnectome/
-│ ├── Step1_DWI_preproc_and_streamlines.sh
-│ └── Step2_CreateConnectome.sh
-│
+│   ├── Step1_DWI_preproc_and_streamlines.sh
+│   └── Step2_CreateConnectome.sh
 └── TrophicLevels/
-├── Step1_fdiff_group.m
-└── Step2_dbs80_par.m
+    ├── Step1_fdiff_group.m
+    └── Step2_dbs80_par.m
+```
 
 
 
