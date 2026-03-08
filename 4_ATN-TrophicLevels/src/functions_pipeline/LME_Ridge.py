@@ -9,7 +9,6 @@ from matplotlib.ticker import MaxNLocator
 from sklearn.model_selection import KFold
 import statsmodels.formula.api as smf
 from statsmodels.stats.multitest import multipletests
-from matplotlib.colors import ListedColormap
 from sklearn.metrics import r2_score
 from matplotlib.lines import Line2D
 from scipy.io import savemat
@@ -28,8 +27,6 @@ def LinearMixedEffectsRidge(measure_df, ABeta_df, Tau_df, Volume_df, demographic
 	# set region_cols to numeric columns in measure_df excluding ID and Group
 	region_cols = [c for c in measure_df.select_dtypes(include=[np.number]).columns if c not in ('ID','Group')]
 	
-	exclude_Regs = {'left gpe','left gpi','left stn','right stn','right gpi','right gpe', 'left nucleus accumbens', 'right nucleus accumbens'}
-	region_cols = [c for c in region_cols if c.strip().lower() not in exclude_Regs]
 
 	def melt_df(df, value_name, id_vars=['ID','Group']):
 		return df.melt(id_vars=id_vars, value_vars=region_cols,
@@ -174,17 +171,14 @@ def LinearMixedEffectsRidge(measure_df, ABeta_df, Tau_df, Volume_df, demographic
 		stacked['pval_fdr'] = np.nan
 		stacked['signif_fdr'] = False
 	
-	#print("\nAll region-wise tests with FDR (combined):")
-	#print(stacked.sort_values(['predictor','pval_fdr']))
 
 	def fill_render_array(pred_name):
-		arr = np.zeros(len(region_labels), dtype=float)
+		arr = np.zeros(len(region_cols), dtype=float)
 		sig_rows = stacked[(stacked['predictor'] == pred_name) & (stacked['signif_fdr'] == True)]
 		for _, r in sig_rows.iterrows():
 			region = str(r['Region']).strip().lower()
 			beta = r['beta']
-			# find matching index in region_labels (case-insensitive, stripped)
-			idx = next((i for i, lbl in enumerate(region_labels)
+			idx = next((i for i, lbl in enumerate(region_cols)
 						if str(lbl).strip().lower() == region), None)
 			if idx is not None:
 				arr[idx] = beta
@@ -208,9 +202,9 @@ def LinearMixedEffectsRidge(measure_df, ABeta_df, Tau_df, Volume_df, demographic
 	labels_scatter = {idx: grp for idx, grp in enumerate(groups_names)}
 	colors = sns.color_palette("colorblind", n_colors=len(groups_names))
 
-	legend_path = os.path.join(out_dir, 'legend.png')
+	legend_path = os.path.join(out_path, 'legend.png')
 	if not os.path.exists(legend_path):
-		os.makedirs(out_dir, exist_ok=True)
+		os.makedirs(out_path, exist_ok=True)
 		legend_handles = [Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=16, alpha=0.7) for color in colors]
 		plt.figure(figsize=(3, 3))
 		new_labels = [str(lbl).replace('p', '+').replace('n', '-') for lbl in groups_names]
@@ -275,7 +269,7 @@ def LinearMixedEffectsRidge(measure_df, ABeta_df, Tau_df, Volume_df, demographic
 			plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=4))
 			plt.gca().yaxis.set_major_locator(MaxNLocator(nbins=4))
 			plt.tight_layout()
-			plt.savefig(os.path.join(out_dir, f'{pred}_BilateralHIPP_{measure_name}_APOE4.png'), dpi=300)
+			plt.savefig(os.path.join(out_path, f'{pred}_BilateralHIPP_{measure_name}_APOE4.png'), dpi=300)
 			plt.close('all')
 		
 		for _, row in sig_rows.iterrows():

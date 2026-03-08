@@ -80,13 +80,13 @@ dir_h['directedness'] = harmonize_data(dir_df['directedness'].to_numpy().reshape
 print("Computing TL network-level...")
 TL_net_h = TL_h[['ID', 'Group']].copy()
 for net in net_names:
-  regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
-  exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
+	regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
+	exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
 	regions_in_net = [region for region in regions_in_net if not any(keyword in region.lower() for keyword in exclude_subcortical)]
-  if regions_in_sfn:
-			TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
+	if regions_in_sfn:
+		TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
 	else:
-			TL_net_h[net] = np.nan
+		TL_net_h[net] = np.nan
 
 # -------------------------------------------------------
 # 5. Group Comparisons

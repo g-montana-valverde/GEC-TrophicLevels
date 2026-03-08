@@ -1,3 +1,5 @@
+import pandas as pd
+
 def ADAS_filtering(adas_original_df, demographics_df):
 	# Filter by PHASE
 	adas_df=adas_original_df[adas_original_df['PHASE']=='ADNI3']
@@ -138,7 +140,7 @@ def MoCA_filtering(MOCA_original_df, demographics_df):
 	MOCA_df['MOCADEL'] = MOCA_df[['DELW1','DELW2','DELW3','DELW4','DELW5']].eq(1).sum(axis=1)
 	MOCA_df['MOCAORI'] = MOCA_df[['DATE','MONTH','YEAR','DAY','PLACE','CITY']].sum(axis=1, skipna=True)
 	# Get only relevant columns
-  MOCA_df.columns = [col.replace('MOCA', 'MoCA') for col in MOCA_df.columns]
+	MOCA_df.columns = [col.replace('MOCA', 'MoCA') for col in MOCA_df.columns]
 	MOCA_df = MOCA_df[['PHASE', 'PTID', 'MoCA', 'MOCAVISS', 'MOCANAME', 'MOCAATT', 'MOCALAN', 'MOCAABS', 'MOCADEL', 'MOCAORI']]
 	
 	return MOCA_df

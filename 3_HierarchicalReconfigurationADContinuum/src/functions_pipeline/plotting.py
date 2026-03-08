@@ -3,6 +3,9 @@ import ptitprince as pt
 from matplotlib.ticker import MaxNLocator
 from scipy.io import savemat, loadmat
 import os
+import numpy as np
+import seaborn as sns
+
 
 def significance_marker(p):
 	if p < 0.001: return '***'
@@ -76,8 +79,8 @@ def plot_network_level_comparison(df, pvals, name, out_path):
 	net_names = ['VN', 'SMN', 'DAN', 'SAN', 'LN', 'CN', 'DMN']
 
 	df_copy = df_copy.melt(
-			id_vars=[col for col in df_copy.columns if col not in available_SFN_names],
-			value_vars=available_SFN_names,
+			id_vars=[col for col in df_copy.columns if col not in net_names],
+			value_vars=net_names,
 			var_name='Network',
 			value_name=name
 		)

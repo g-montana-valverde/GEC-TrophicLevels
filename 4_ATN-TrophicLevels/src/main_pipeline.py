@@ -1,14 +1,13 @@
 import argparse
 import numpy as np
 import pandas as pd
-from scipy.io import loadmat, savemat
+from scipy.io import loadmat
 from pathlib import Path
 import json
-from statsmodels.stats import multitest
 
 from functions_pipeline import (
-  harmonize_data,
-  LinearMixedEffectsRidge
+	harmonize_data,
+	LinearMixedEffectsRidge
 )
 
 # -------------------------------------------------------
@@ -40,15 +39,15 @@ region_labels = pd.read_csv(data_dir + 'dbs80_labels.txt', sep="\t", header=None
 net_names = ['VN', 'SMN', 'DAN', 'SAN', 'LN', 'CN', 'DMN']
 with open(data_dir + 'reg2net.json', 'r') as f_json:
 	reg2net = json.load(f_json)
-  
+	
 print("Loading data...")
 groups = [globals()[k] for k in sorted(globals().keys()) if k.startswith('g') and k[1:].isdigit()]
 dfs = []
 for grp in groups:
-  data_tl = loadmat(data_dir / f"TL_ADNI3_{grp}_dbs80.mat")["TL"]
-  deriv_dir = derivatives_dir / grp / 'derivatives'
-  subs = sorted(int(p.name.removeprefix('sub-')) for p in deriv_dir.iterdir() if p.is_dir() and p.name.startswith('sub-'))
-  df = pd.DataFrame(data_tl, columns=region_labels); df.insert(0, 'ID', subs); df.insert(1, 'Group', grp); dfs.append(df)
+	data_tl = loadmat(data_dir / f"TL_ADNI3_{grp}_dbs80.mat")["TL"]
+	deriv_dir = derivatives_dir / grp / 'derivatives'
+	subs = sorted(int(p.name.removeprefix('sub-')) for p in deriv_dir.iterdir() if p.is_dir() and p.name.startswith('sub-'))
+	df = pd.DataFrame(data_tl, columns=region_labels); df.insert(0, 'ID', subs); df.insert(1, 'Group', grp); dfs.append(df)
 
 tl_df = pd.concat(dfs, ignore_index=True)
 
@@ -82,14 +81,14 @@ ABeta_net_h = ABeta_h[['ID', 'Group']].copy()
 Tau_net_h = Tau_h[['ID', 'Group']].copy()
 GMV_net_h = GMV_h[['ID', 'Group']].copy()
 for net in net_names:
-  regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
-  exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
+	regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
+	exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
 	regions_in_net = [region for region in regions_in_net if not any(keyword in region.lower() for keyword in exclude_subcortical)]
-  if regions_in_sfn:
-    TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
-    ABeta_net_h[net] = ABeta_h[regions_in_net].mean(axis=1)
-    Tau_net_h[net] = Tau_h[regions_in_net].mean(axis=1)
-    GMV_net_h[net] = GMV_h[regions_in_net].mean(axis=1)
+	if regions_in_sfn:
+		TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
+		ABeta_net_h[net] = ABeta_h[regions_in_net].mean(axis=1)
+		Tau_net_h[net] = Tau_h[regions_in_net].mean(axis=1)
+		GMV_net_h[net] = GMV_h[regions_in_net].mean(axis=1)
 	else:
 			TL_net_h[net] = np.nan; ABeta_net_h[net] = np.nan; Tau_net_h[net] = np.nan; GMV_net_h[net] = np.nan
 
@@ -99,6 +98,6 @@ for net in net_names:
 print("Running Linear Mixed Effects Models with Ridge Regularization...")
 
 # 5.1. LME - Region Level
-LinearMixedEffectsRidge(TL_h, ABeta_h, Tau_h, GMV_h, demo, 'TrophicLevel', out_path=str(out_dir / "RegionLevel" /))
+LinearMixedEffectsRidge(TL_h, ABeta_h, Tau_h, GMV_h, demo, 'TrophicLevel', out_path=out_dir + "/RegionLevel/")
 # 5.2. LME - Network
-LinearMixedEffectsRidge(TL_net_h, ABeta_net_h, Tau_net_h, GMV_net_h, demo, 'TrophicLevel', out_path=str(out_dir / "NetworkLevel" /))
+LinearMixedEffectsRidge(TL_net_h, ABeta_net_h, Tau_net_h, GMV_net_h, demo, 'TrophicLevel', out_path=out_dir + "/NetworkLevel/")

@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.linalg import lstsq
+from statsmodels.stats import multitest
 
 def fast_permutation_test(df, demographics, g1, g2, full_labels, n_perm):
 

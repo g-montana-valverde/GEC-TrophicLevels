@@ -1,10 +1,9 @@
 import argparse
 import numpy as np
 import pandas as pd
-from scipy.io import loadmat, savemat
+from scipy.io import loadmat
 from pathlib import Path
 import json
-from statsmodels.stats import multitest
 
 from functions_pipeline import (
 	harmonize_data,
@@ -91,7 +90,7 @@ for net in net_names:
 	if regions_in_sfn:
 		TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
 	else:
-		TL_net_h[net] = np.nan;
+		TL_net_h[net] = np.nan
 
 # -------------------------------------------------------
 # 5. Multiple Linear Regression Models
@@ -101,6 +100,6 @@ print("Running Multiple Linear Regression Models...")
 for test in assessments:
 	cog_df = df.copy()
 	# 5.1. MLR - Region Level
-	run_multiple_regression(TL_h, cog_df, test, demo, 'TrophicLevel', out_path=str(out_dir / "RegionLevel" /))
+	run_multiple_regression(TL_h, cog_df, test, demo, 'TrophicLevel', out_path=out_dir + "/RegionLevel/")
 	# 5.2. MLR - Network
-	run_multiple_regression(TL_net_h, cog_df, test, demo, 'TrophicLevel', out_path=str(out_dir / "NetworkLevel" /))
+	run_multiple_regression(TL_net_h, cog_df, test, demo, 'TrophicLevel', out_path=out_dir + "/NetworkLevel/")

@@ -5,7 +5,8 @@ import os
 import statsmodels.api as sm
 from statsmodels.stats.multitest import multipletests
 from scipy.io import savemat
-from matplotlib.colors import ListedColormap
+import numpy as np
+import pandas as pd
 
 def significance_marker(p):
 	if p < 0.001: return '***'
@@ -19,8 +20,6 @@ def run_multiple_regression(measure_df, cog_df, cog_name, demographics_df, measu
 	# 1. Prepare data (same as your PLS code)
 	# ================================================================
 	region_cols = [c for c in measure_df.select_dtypes(include=[np.number]).columns if c not in ('ID','Group')]
-	exclude_Regs = {'left gpe','left gpi','left stn','right stn','right gpi','right gpe'}
-	region_cols = [c for c in region_cols if c.strip().lower() not in exclude_Regs]
 	
 	def melt_df(df, value_name, id_vars=['ID','Group']):
 		return df.melt(id_vars=id_vars, value_vars=region_cols,
@@ -69,18 +68,18 @@ def run_multiple_regression(measure_df, cog_df, cog_name, demographics_df, measu
 	results_df['pval_fdr'] = pvals_fdr
 	results_df['significant'] = reject
 
-	render_array = np.zeros(len(region_labels), dtype=float)
+	render_array = np.zeros(len(region_cols), dtype=float)
 	sig_rows = results_df[results_df['significant']]
 	for _, r in sig_rows.iterrows():
 		region = str(r['region']).strip().lower()
 		beta = r['coef']
 		# find matching index in region_labels (case-insensitive, stripped)
-		idx = next((i for i, lbl in enumerate(region_labels)
+		idx = next((i for i, lbl in enumerate(region_cols)
 					if str(lbl).strip().lower() == region), None)
 		if idx is not None:
 			render_array[idx] = beta
 
-	savemat(out_dir + 'Render.mat', {'render': np.asarray(render_array)})
+	savemat(out_path + 'Render.mat', {'render': np.asarray(render_array)})
 
 	# ================================================================
 	# 4. Plot significant regions with slope
