@@ -25,7 +25,7 @@ parser.add_argument("--out-dir", required=True, help="Where results will be save
 args = parser.parse_args()
 
 data_dir = Path(args.data_dir)
-derivatives_dir = Path(args.derivatives_dir)
+derivatives_dir = Path(args.deriv_dir)
 out_dir = Path(args.out_dir)
 out_dir.mkdir(exist_ok=True, parents=True)
 
@@ -71,6 +71,8 @@ cov = pd.concat([demo.reset_index(drop=True), sites.reset_index(drop=True)], axi
 # 3. Harmonize data
 # -------------------------------------------------------
 print("Harmonizing...")
+TL_h = tl_df.copy()
+dir_h = dir_df.copy()
 TL_h[region_labels] = harmonize_data(tl_df[region_labels].to_numpy(), cov)
 dir_h['directedness'] = harmonize_data(dir_df['directedness'].to_numpy().reshape(-1, 1), cov)
 
@@ -83,7 +85,7 @@ for net in net_names:
 	regions_in_net = [region for region, sfn_map in reg2net.items() if sfn in (sfn_map or "") and region in TL_h.columns]
 	exclude_subcortical = ['hippocampus', 'amygdala', 'thalamus', 'caudate', 'accumbens', 'putamen', 'gpe', 'gpi', 'stn']
 	regions_in_net = [region for region in regions_in_net if not any(keyword in region.lower() for keyword in exclude_subcortical)]
-	if regions_in_sfn:
+	if regions_in_net:
 		TL_net_h[net] = TL_h[regions_in_net].mean(axis=1)
 	else:
 		TL_net_h[net] = np.nan
