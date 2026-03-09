@@ -116,7 +116,7 @@ for a, b in pairwise:
 	save_mat_for_rendering(tl_stat, 'TrophicLevels', -lim, lim, f"{a}_{b}", out_path=str(out_dir / f"RegionsGroupComparison_{a}_{b}.mat"))
 
 # 5.3. Trophic Levels - Networks
-tl_pv = []
+tl_pv_fdr = []
 for net in net_names:
 	tl_pvs = []
 	for a, b in pairwise:
@@ -124,7 +124,7 @@ for net in net_names:
 		tl_pvs.append(tl_pv_pair)
 
 	_, tl_pv_corr = np.array(multitest.fdrcorrection(np.array(tl_pvs).flatten()))	
-	tl_pv.append(np.array(tl_pv_corr))
+	tl_pv_fdr.append(np.array(tl_pv_corr))
 
 	
 # -------------------------------------------------------
@@ -134,6 +134,6 @@ print("Plotting directedness...")
 plot_directedness(dir_df, tdir_pvs_corr, out_path=str(out_dir / "DirectednessGroupComparison.png"))
 
 print("Plotting network-level...")
-plot_network_level_comparison(TL_net_h, tl_pv, 'Trophic Level', out_path=str(out_dir / "NetworksGroupComparison.png"))
+plot_network_level_comparison(TL_net_h, tl_pv_fdr, 'Trophic Level', out_path=str(out_dir / "NetworksGroupComparison.png"))
 
 print("Pipeline complete.")

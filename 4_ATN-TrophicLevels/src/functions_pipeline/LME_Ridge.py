@@ -162,15 +162,10 @@ def LinearMixedEffectsRidge(measure_df, ABeta_df, Tau_df, Volume_df, demographic
 	valid_mask = stacked['pval'].notnull() & np.isfinite(stacked['pval'])
 	pvals = stacked.loc[valid_mask, 'pval'].values
 
-	if len(pvals) > 0:
-		rej, pvals_fdr, _, _ = multipletests(pvals, alpha=0.05, method='fdr_bh')
-		stacked.loc[valid_mask, 'pval_fdr'] = pvals_fdr
-		stacked.loc[valid_mask, 'signif_fdr'] = rej
-	else:
-		print("⚠️ No valid p-values for FDR correction.")
-		stacked['pval_fdr'] = np.nan
-		stacked['signif_fdr'] = False
 	
+	rej, pvals_fdr, _, _ = multipletests(pvals, alpha=0.05, method='fdr_bh')
+	stacked.loc[valid_mask, 'pval_fdr'] = pvals_fdr
+	stacked.loc[valid_mask, 'signif_fdr'] = rej
 
 	def fill_render_array(pred_name):
 		arr = np.zeros(len(region_cols), dtype=float)
