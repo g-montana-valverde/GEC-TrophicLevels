@@ -19,8 +19,6 @@ MEM_GB=32
 
 task='rest'
 
-dataset_dir=$HOME/ADNI_dataset
-
 ID=${SLURM_ARRAY_TASK_ID}
 mapfile -t SUBS < <(find "$DATASET_DIR" -maxdepth 1 -type d -name "sub-*" | sort)
 readonly PARTICIPANT="${SUBS[$ID]##*/}"
